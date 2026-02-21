@@ -123,6 +123,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Lädt herunter...'**
   String get downloading;
+
+  /// No description provided for @color.
+  ///
+  /// In de, this message translates to:
+  /// **'Farbe'**
+  String get color;
+
+  /// No description provided for @colorCustom.
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Farbe'**
+  String get colorCustom;
+
+  /// No description provided for @colorInvalidHex.
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültiger Hex-Wert'**
+  String get colorInvalidHex;
 }
 
 class _AppLocalizationsDelegate

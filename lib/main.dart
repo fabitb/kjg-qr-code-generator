@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:kjg_qr_code_generator/util/localization_extension.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -52,7 +51,7 @@ class _HomePageState extends State<HomePage> {
     decoration = const PrettyQrDecoration(
       background: Colors.transparent,
       quietZone: PrettyQrQuietZone.zero,
-      shape: PrettyQrSquaresSymbol()
+      shape: PrettyQrSmoothSymbol(roundFactor: 0.1)
     );
   }
 
@@ -61,6 +60,7 @@ class _HomePageState extends State<HomePage> {
     final loc = context.localizations;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         title: Text(loc.title),
@@ -73,7 +73,9 @@ class _HomePageState extends State<HomePage> {
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final safePadding = MediaQuery.of(context).padding;
+              final mediaQuery = MediaQuery.of(context);
+              final safePadding = mediaQuery.padding;
+              final keyboardHeight = mediaQuery.viewInsets.bottom;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         Expanded(
                           child: SingleChildScrollView(
-                            padding: safePadding.copyWith(top: 0),
+                            padding: safePadding.copyWith(top: 0, bottom: keyboardHeight),
                             child: _PrettyQrSettings(
                               decoration: decoration,
                               onChanged: (value) => setState(() {
@@ -215,6 +217,13 @@ class _PrettyQrSettings extends StatefulWidget {
     position: PrettyQrDecorationImagePosition.embedded,
   );
 
+  static const _presetColors = [
+    Color(0xFF000000),
+    Color(0xFFFFFFFF),
+    Color(0xFF00B6BE),
+    Color(0xFF006D84),
+  ];
+
   const _PrettyQrSettings({
     required this.decoration,
     this.onChanged,
@@ -229,6 +238,11 @@ class _PrettyQrSettings extends StatefulWidget {
 class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
   late final TextEditingController urlEditingController;
   late final TextEditingController imageSizeEditingController;
+  late final TextEditingController _hexController;
+
+  Color _selectedColor = const Color(0xFF000000);
+  bool _isCustomColor = false;
+  bool _hexIsValid = true;
 
   @override
   void initState() {
@@ -238,11 +252,36 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
     imageSizeEditingController = TextEditingController(
       text: ' 512w',
     );
+    _hexController = TextEditingController(text: '#000000');
   }
 
   int get imageSize {
     final rawValue = imageSizeEditingController.text;
     return int.parse(rawValue.replaceAll('w', '').replaceAll(' ', ''));
+  }
+
+  void _applyColor(Color c) {
+    setState(() {
+      _selectedColor = c;
+    });
+    widget.onChanged?.call(PrettyQrDecoration(
+      image: widget.decoration.image,
+      shape: PrettyQrSmoothSymbol(color: c, roundFactor: 0.1),
+      quietZone: widget.decoration.quietZone,
+      background: widget.decoration.background,
+    ));
+  }
+
+  void _onHexChanged(String value) {
+    String hex = value.trim();
+    if (hex.startsWith('#')) hex = hex.substring(1);
+
+    if (hex.length == 6 && RegExp(r'^[0-9a-fA-F]{6}$').hasMatch(hex)) {
+      setState(() { _hexIsValid = true; });
+      _applyColor(Color(int.parse('FF$hex', radix: 16)));
+    } else {
+      setState(() { _hexIsValid = false; });
+    }
   }
 
   void showExportPath(String? path) {
@@ -286,6 +325,83 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
                 : Icons.hide_image_outlined,
           ),
           title: Text(context.localizations.kjg_logo),
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.palette_outlined),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(loc.color),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ..._PrettyQrSettings._presetColors.map((color) {
+                    final isSelected = !_isCustomColor && _selectedColor == color;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() { _isCustomColor = false; });
+                        _applyColor(color);
+                      },
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey.shade400,
+                            width: isSelected ? 3 : 1,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() { _isCustomColor = true; });
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _isCustomColor
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.grey.shade400,
+                          width: _isCustomColor ? 3 : 1,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.gradient,
+                        size: 20,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (_isCustomColor) ...[
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _hexController,
+                  decoration: InputDecoration(
+                    labelText: loc.colorCustom,
+                    errorText: _hexIsValid ? null : loc.colorInvalidHex,
+                    border: const OutlineInputBorder(),
+                  ),
+                  onChanged: _onHexChanged,
+                ),
+              ],
+            ],
+          ),
         ),
         if (widget.onExportPressed != null) ...[
           const Divider(),
@@ -363,6 +479,7 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
   void dispose() {
     urlEditingController.dispose();
     imageSizeEditingController.dispose();
+    _hexController.dispose();
     super.dispose();
   }
 }

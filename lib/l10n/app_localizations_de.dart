@@ -22,4 +22,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get downloading => 'Lädt herunter...';
+
+  @override
+  String get color => 'Farbe';
+
+  @override
+  String get colorCustom => 'Eigene Farbe';
+
+  @override
+  String get colorInvalidHex => 'Ungültiger Hex-Wert';
 }

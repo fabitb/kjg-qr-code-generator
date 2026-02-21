@@ -3,5 +3,8 @@
   "kjg_logo": "Seelenbohrer",
   "download": "Download",
   "url": "URL",
-  "downloading": "Lädt herunter..."
+  "downloading": "Lädt herunter...",
+  "color": "Farbe",
+  "colorCustom": "Eigene Farbe",
+  "colorInvalidHex": "Ungültiger Hex-Wert"
 }
