@@ -31,5 +31,5 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "build/web/*"
-          target: "/var/www/kjg_qr_code_generator"
+          target: "/var/www/kjg-qr-code-generator"
           strip_components: 2
