@@ -97,44 +97,42 @@ class _HomePageState extends State<HomePage> {
                     ),
                   Flexible(
                     flex: 2,
-                    child: Column(
-                      children: [
-                        if (constraints.maxWidth < 720)
-                          Padding(
-                            padding: safePadding.copyWith(
-                              top: 0,
-                              bottom: 0,
+                    child: SingleChildScrollView(
+                      padding: safePadding.copyWith(top: 0, bottom: keyboardHeight),
+                      child: Column(
+                        children: [
+                          if (constraints.maxWidth < 720)
+                            Padding(
+                              padding: safePadding.copyWith(
+                                top: 0,
+                                bottom: 0,
+                              ),
+                              child: _PrettyQrAnimatedView(
+                                qrImage: qrImage,
+                                decoration: decoration,
+                              ),
                             ),
-                            child: _PrettyQrAnimatedView(
-                              qrImage: qrImage,
-                              decoration: decoration,
-                            ),
+                          _PrettyQrSettings(
+                            decoration: decoration,
+                            onChanged: (value) => setState(() {
+                              decoration = value;
+                            }),
+                            onExportPressed: (size) {
+                              return qrImage.exportAsImage(
+                                context,
+                                size: size,
+                                decoration: decoration,
+                              );
+                            },
+                            onUrlChanged: (url) => setState(() {
+                              qrImage = QrImage(QrCode.fromData(
+                                data: url,
+                                errorCorrectLevel: QrErrorCorrectLevel.H,
+                              ));
+                            }),
                           ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            padding: safePadding.copyWith(top: 0, bottom: keyboardHeight),
-                            child: _PrettyQrSettings(
-                              decoration: decoration,
-                              onChanged: (value) => setState(() {
-                                decoration = value;
-                              }),
-                              onExportPressed: (size) {
-                                return qrImage.exportAsImage(
-                                  context,
-                                  size: size,
-                                  decoration: decoration,
-                                );
-                              },
-                              onUrlChanged: (url) => setState(() {
-                                qrImage = QrImage(QrCode.fromData(
-                                  data: url,
-                                  errorCorrectLevel: QrErrorCorrectLevel.H,
-                                ));
-                              }),
-                            )
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
