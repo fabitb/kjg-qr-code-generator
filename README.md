@@ -1,17 +1,13 @@
-# kjg_qr_code_generator
+# KJG QR-Code Generator
 
-A KjG QR-Code Generator
+Ein QR-Code-Generator speziell für die Katholische junge Gemeinde (KjG).
 
-## Getting Started
+Die App erstellt QR-Codes im passenden Design – mit offiziellen Farben und integrierten Grafiken wie dem Seelenbohrer. 
+Perfekt für Veranstaltungen und Öffentlichkeitsarbeit.
 
-This project is a starting point for a Flutter application.
+Open Source und frei nutzbar für alle KjG-Gruppen in Deutschland.
 
-A few resources to get you started if this is your first Flutter project:
+Entwickelt von der KjG München und Freising.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+👉 Hier geht's lang: [QR-Code Generator](https://qr.kjg-muenchen.de/)
