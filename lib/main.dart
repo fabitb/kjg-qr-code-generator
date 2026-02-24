@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:kjg_qr_code_generator/util/localization_extension.dart';
+import 'package:plausible/plausible.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'features/save_image_web.dart';
 import 'l10n/app_localizations.dart';
 
+Plausible? analytics;
+
 void main() {
+  const plausibleServerUrl = String.fromEnvironment('PLAUSIBLE_SERVER_URL', defaultValue: '');
+  const plausibleDomain    = String.fromEnvironment('PLAUSIBLE_DOMAIN',     defaultValue: '');
+
+  if (plausibleServerUrl.isNotEmpty && plausibleDomain.isNotEmpty) {
+    analytics = Plausible(server: Uri.https(plausibleServerUrl, '/api/event'), domain: plausibleDomain);
+  }
   runApp(const KjGQrCodeGeneratorApp());
 }
 
@@ -53,6 +62,8 @@ class _HomePageState extends State<HomePage> {
       quietZone: PrettyQrQuietZone.zero,
       shape: PrettyQrSmoothSymbol(roundFactor: 0.1)
     );
+
+    analytics?.send(path: '/');
   }
 
   @override
@@ -407,6 +418,10 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
             leading: const Icon(Icons.save_alt_outlined),
             title: Text(loc.download),
             onTap: () async {
+              analytics?.send(
+                event: 'download_code',
+                props: {'url': urlEditingController.text},
+              );
               final path = await widget.onExportPressed?.call(imageSize);
               showExportPath(path);
             },
