@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kjg_qr_code_generator/util/localization_extension.dart';
 import 'package:plausible/plausible.dart';
@@ -12,7 +13,7 @@ void main() {
   const plausibleDomain    = String.fromEnvironment('PLAUSIBLE_DOMAIN',     defaultValue: '');
 
   if (plausibleServerUrl.isNotEmpty && plausibleDomain.isNotEmpty) {
-    analytics = Plausible(server: Uri.https(plausibleServerUrl, '/api/event'), domain: plausibleDomain);
+    analytics = Plausible(server: Uri.https(plausibleServerUrl, '/api/event'), domain: plausibleDomain, isActive: !kDebugMode);
   }
   runApp(const KjGQrCodeGeneratorApp());
 }
