@@ -141,6 +141,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ungültiger Hex-Wert'**
   String get colorInvalidHex;
+
+  /// No description provided for @style.
+  ///
+  /// In de, this message translates to:
+  /// **'Stil'**
+  String get style;
+
+  /// No description provided for @styleSmooth.
+  ///
+  /// In de, this message translates to:
+  /// **'Smooth'**
+  String get styleSmooth;
+
+  /// No description provided for @styleSquares.
+  ///
+  /// In de, this message translates to:
+  /// **'Punkte'**
+  String get styleSquares;
 }
 
 class _AppLocalizationsDelegate

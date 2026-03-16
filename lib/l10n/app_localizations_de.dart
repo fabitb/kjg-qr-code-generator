@@ -31,4 +31,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get colorInvalidHex => 'Ungültiger Hex-Wert';
+
+  @override
+  String get style => 'Stil';
+
+  @override
+  String get styleSmooth => 'Smooth';
+
+  @override
+  String get styleSquares => 'Punkte';
 }

@@ -6,5 +6,8 @@
   "downloading": "Lädt herunter...",
   "color": "Farbe",
   "colorCustom": "Eigene Farbe",
-  "colorInvalidHex": "Ungültiger Hex-Wert"
+  "colorInvalidHex": "Ungültiger Hex-Wert",
+  "style": "Stil",
+  "styleSmooth": "Smooth",
+  "styleSquares": "Punkte"
 }

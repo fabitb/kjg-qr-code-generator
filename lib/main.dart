@@ -8,6 +8,8 @@ import 'l10n/app_localizations.dart';
 
 Plausible? analytics;
 
+enum QrStyle { smooth, squares }
+
 void main() {
   const plausibleServerUrl = String.fromEnvironment('PLAUSIBLE_SERVER_URL', defaultValue: '');
   const plausibleDomain    = String.fromEnvironment('PLAUSIBLE_DOMAIN',     defaultValue: '');
@@ -253,6 +255,7 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
   Color _selectedColor = const Color(0xFF000000);
   bool _isCustomColor = false;
   bool _hexIsValid = true;
+  QrStyle? _selectedStyle;
 
   @override
   void initState() {
@@ -270,16 +273,31 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
     return int.parse(rawValue.replaceAll('w', '').replaceAll(' ', ''));
   }
 
+  PrettyQrShape _buildShape(Color color) {
+    return switch (_selectedStyle) {
+      QrStyle.smooth  => PrettyQrSmoothSymbol(color: color, roundFactor: 1),
+      QrStyle.squares => PrettyQrSquaresSymbol(color: color, rounding: 1),
+      null            => PrettyQrSmoothSymbol(color: color, roundFactor: 0.1),
+    };
+  }
+
   void _applyColor(Color c) {
     setState(() {
       _selectedColor = c;
     });
     widget.onChanged?.call(PrettyQrDecoration(
       image: widget.decoration.image,
-      shape: PrettyQrSmoothSymbol(color: c, roundFactor: 0.1),
+      shape: _buildShape(c),
       quietZone: widget.decoration.quietZone,
       background: widget.decoration.background,
     ));
+  }
+
+  void _applyStyle(Set<QrStyle> selection) {
+    setState(() {
+      _selectedStyle = selection.firstOrNull;
+    });
+    _applyColor(_selectedColor);
   }
 
   void _onHexChanged(String value) {
@@ -335,6 +353,26 @@ class _PrettyQrSettingsState extends State<_PrettyQrSettings> {
                 : Icons.hide_image_outlined,
           ),
           title: Text(context.localizations.kjg_logo),
+        ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.style_outlined),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(loc.style),
+              const SizedBox(height: 8),
+              SegmentedButton<QrStyle>(
+                segments: [
+                  ButtonSegment(value: QrStyle.smooth,  label: Text(loc.styleSmooth)),
+                  ButtonSegment(value: QrStyle.squares, label: Text(loc.styleSquares)),
+                ],
+                selected: {if (_selectedStyle != null) _selectedStyle!},
+                emptySelectionAllowed: true,
+                onSelectionChanged: _applyStyle,
+              ),
+            ],
+          ),
         ),
         const Divider(),
         ListTile(
